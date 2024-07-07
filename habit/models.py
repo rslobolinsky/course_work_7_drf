@@ -1,15 +1,13 @@
 from django.db import models
 
-from users.models import User
-
-NULLABLE = {"null": True, "blank": True}
+from config.settings import AUTH_USER_MODEL, NULLABLE
 
 
 class Habit(models.Model):
     """Класс модели привычки"""
 
     creator = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name="Создатель"
+        AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Создатель"
     )
     place = models.CharField(
         max_length=50, verbose_name="Место", **NULLABLE
@@ -28,11 +26,12 @@ class Habit(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Родительская привычка",
         **NULLABLE,
+        related_name="related_to_habit",
     )  # Родительская привычка
     periodicity = models.IntegerField(
         default=1, verbose_name="Периодичность"
     )  # Периодичность привычки
-    reward = models.CharField(max_length=50, verbose_name="Бонус", **NULLABLE)  # Бонус
+    reward = models.CharField(max_length=50, verbose_name="Бонус", **NULLABLE)
     duration = models.DurationField(
         default=None, verbose_name="Продолжительность", **NULLABLE
     )  # Продолжительность привычки
@@ -42,7 +41,7 @@ class Habit(models.Model):
 
     def __str__(self) -> str:
         """Строковое представление модели"""
-        return f"{self.creator} {self.place} {self.time} {self.action}"
+        return f"Я буду {self.action} в {self.time} в {self.place} "
 
     class Meta:
         verbose_name = "Привычка"
